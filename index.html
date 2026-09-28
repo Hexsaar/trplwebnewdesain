@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teknologi Rekayasa Perangkat Lunak - Sekolah Vokasi IPB University</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 5rem;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .menu-panel {
+            max-height: 0;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-0.5rem);
+            visibility: hidden;
+            transition: max-height 300ms ease, opacity 200ms ease, transform 200ms ease, visibility 300ms;
+        }
+
+        .menu-panel.is-open {
+            max-height: min(32rem, calc(100vh - 72px));
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+            visibility: visible;
+        }
+
+        .menu-icon-line {
+            transform-origin: 12px 12px;
+            transition: transform 250ms ease, opacity 180ms ease;
+        }
+
+        .menu-toggle.is-open .menu-icon-top {
+            transform: translateY(6px) rotate(45deg);
+        }
+
+        .menu-toggle.is-open .menu-icon-middle {
+            opacity: 0;
+        }
+
+        .menu-toggle.is-open .menu-icon-bottom {
+            transform: translateY(-6px) rotate(-45deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            border-top-width: 0;
+            transition: max-height 350ms ease, opacity 250ms ease, padding 350ms ease, border-width 350ms ease;
+        }
+
+        .accordion-content.is-open {
+            max-height: 32rem;
+            opacity: 1;
+            padding-top: 1rem;
+            padding-bottom: 1.5rem;
+            border-top-width: 1px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            .menu-panel,
+            .menu-icon-line,
+            .accordion-content {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-[#120438] text-white min-h-screen flex flex-col justify-between relative overflow-x-hidden">
+
+    <section id="beranda" class="relative flex min-h-screen flex-col justify-between overflow-hidden pt-[72px]">
+    <!-- Background Image container -->
+    <div class="absolute inset-x-0 top-[72px] bottom-0 z-0 bg-cover bg-center bg-no-repeat" 
+         style="background-image: url('https://www.ipb.ac.id/wp-content/uploads/2024/03/Hobi-Ngoding-dan-Mau-Jadi-Software-Engineer-Yuk-Wujudkan-Mimpimu-di-Prodi-Sekolah-Vokasi-IPB-University-Ini-scaled-770x400.jpg');">
+    </div>
+    
+    <!-- Custom Gradient Overlay matching user reference (Dark top fading into vibrant blue bottom with transparency) -->
+    <div class="absolute inset-x-0 top-[72px] bottom-0 z-0 bg-gradient-to-b from-[#212124]/35 via-[#1b1936]/45 to-[#1a1b5c]/60"></div>
+
+    <!-- Header / Navbar with solid dark purple background -->
+    <header class="fixed inset-x-0 top-0 z-50 w-full bg-[#1b084e] px-6 md:px-16 py-4 flex items-center justify-between shadow-md">
+        <!-- Logo -->
+        <div class="flex items-center">
+            <img src="assets/logofix.png"
+                 alt="Teknologi Rekayasa Perangkat Lunak"
+                 class="h-10 w-auto max-w-[210px] object-contain">
+        </div>
+
+        <!-- Desktop Menu -->
+        <nav class="hidden xl:flex items-center gap-4 text-xs font-medium">
+            <a href="#beranda" class="text-white hover:text-cyan-300 transition-colors">Beranda</a>
+            <a href="#tentang" class="text-white hover:text-cyan-300 transition-colors">Tentang</a>
+            <a href="#berita" class="text-white hover:text-cyan-300 transition-colors">Berita</a>
+        </nav>
+
+        <!-- Hamburger Menu Icon -->
+        <div class="flex items-center">
+            <button id="mobile-menu-button" type="button" aria-label="Buka menu" aria-controls="mobile-menu" aria-expanded="false" onclick="toggleMobileMenu()" class="menu-toggle text-white focus:outline-none hover:text-cyan-300 transition-colors p-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <path class="menu-icon-line menu-icon-top" stroke-linecap="round" d="M4 6h16"></path>
+                    <path class="menu-icon-line menu-icon-middle" stroke-linecap="round" d="M4 12h16"></path>
+                    <path class="menu-icon-line menu-icon-bottom" stroke-linecap="round" d="M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+
+        <nav id="mobile-menu" class="menu-panel absolute top-full inset-x-0 overflow-y-auto bg-[#1b084e] px-6 pb-4 shadow-md" aria-label="Navigasi tambahan" inert>
+            <a href="#beranda" onclick="closeMobileMenu()" class="block py-3 text-white hover:text-cyan-300 transition-colors xl:hidden">Beranda</a>
+            <a href="#tentang" onclick="closeMobileMenu()" class="block py-3 text-white hover:text-cyan-300 transition-colors xl:hidden">Tentang</a>
+            <a href="#mandat" onclick="closeMobileMenu()" class="block py-3 text-white hover:text-cyan-300 transition-colors">Mandat</a>
+            <a href="#profil-umum" onclick="toggleAccordion('content-1', 'icon-1'); closeMobileMenu()" class="block py-3 text-white hover:text-cyan-300 transition-colors">Profil Umum</a>
+            <a href="#visi-misi" onclick="toggleAccordion('content-2', 'icon-2'); closeMobileMenu()" class="block py-3 text-white hover:text-cyan-300 transition-colors">Visi Misi</a>
+            <a href="#profil-lulusan" onclick="toggleAccordion('content-3', 'icon-3'); closeMobileMenu()" class="block py-3 text-white hover:text-cyan-300 transition-colors">Profil Lulusan</a>
+            <a href="#capaian-pembelajaran" onclick="toggleAccordion('content-4', 'icon-4'); closeMobileMenu()" class="block py-3 text-white hover:text-cyan-300 transition-colors">Capaian Pembelajaran</a>
+            <a href="#berita" onclick="closeMobileMenu()" class="block py-3 text-white hover:text-cyan-300 transition-colors xl:hidden">Berita</a>
+        </nav>
+    </header>
+
+    <!-- Main Hero Content (No background box, directly on top of gradient and image) -->
+    <main class="relative z-10 flex-grow flex items-center px-6 md:px-16 py-16">
+        <div class="max-w-xl">
+            <!-- Main Title -->
+            <h1 class="text-[40px] font-extrabold tracking-tight text-white leading-tight mb-6 drop-shadow-lg">
+                Teknologi Rekayasa<br>
+                Perangkat Lunak
+            </h1>
+
+            <!-- Description Text (No container box) -->
+            <p class="text-sm md:text-base text-gray-100 leading-relaxed mb-8 font-light drop-shadow">
+                Program Studi Sarjana Terapan Teknologi Rekayasa Perangkat Lunak merupakan program pendidikan vokasi yang menyiapkan lulusan profesional yang memiliki sikap bertanggung jawab, etika profesi, kemampuan bekerja sama, serta komitmen terhadap pembelajaran sepanjang hayat dalam pengembangan teknologi informasi.
+            </p>
+
+            <!-- Call to Action Button -->
+            <div>
+                <a href="#" class="inline-flex items-center space-x-3 bg-white text-gray-900 font-medium px-6 py-3 rounded-xl shadow-lg hover:bg-gray-100 transition-all duration-300 group">
+                    <span>Lihat lebih lanjut</span>
+                    <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        
+    </main>
+
+    <div class="relative z-10 w-full px-6 md:px-16 pb-6">
+        <div class="border-t border-white/20 pt-4 text-center text-xs text-gray-300">
+            Teknologi Rekayasa Perangkat Lunak
+        </div>
+    </div>
+    </section>
+
+    <!-- Section Video Profil dengan Ikon Play & Auto-Hide -->
+    <section class="relative w-full min-h-screen bg-[#120438] flex items-center justify-center">
+        <div class="relative w-full aspect-video overflow-hidden bg-black">
+            <iframe id="yt-player" class="w-full h-full object-cover"
+                    src="https://www.youtube.com/embed/ch03himP1XQ?enablejsapi=1"
+                    title="Video Profil TRPL"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+            </iframe>
+
+            <div id="video-overlay" class="absolute inset-0 z-10 bg-gradient-to-t from-[#120438] via-[#120438]/70 to-transparent flex items-end px-8 pb-10 transition-all duration-700">
+                <div id="video-text" class="transition-opacity duration-500">
+                    <h2 class="text-2xl md:text-4xl font-extrabold text-white leading-tight drop-shadow-lg">
+                        Video profil<br>
+                        Teknologi Rekayasa<br>
+                        Perangkat Lunak
+                    </h2>
+                </div>
+            </div>
+
+            <button id="play-btn" type="button" onclick="playVideo()" aria-label="Putar video profil" class="absolute inset-0 m-auto z-20 w-20 h-20 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center shadow-2xl transition-transform transform hover:scale-110 cursor-pointer group">
+                <svg class="w-8 h-8 translate-x-0.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+            </button>
+        </div>
+    </section>
+
+        <!-- Section Tentang Rekayasa Perangkat Lunak -->
+<section id="tentang" class="relative flex min-h-screen w-full items-center py-20 bg-white text-gray-900 px-6 md:px-16 overflow-hidden">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Sisi Kiri: Foto dengan Sudut Melengkung (Rounded) -->
+        <div class="lg:col-span-6 relative">
+            <div class="relative w-full rounded-[0_40px_0_40px] overflow-hidden shadow-xl aspect-[4/3] bg-gray-100">
+                <img src="https://sv.ipb.ac.id/wp-content/uploads/2021/12/header-inf.png" 
+                     alt="Mahasiswa TRPL IPB di Koridor Kampus" 
+                     class="w-full h-full object-cover object-center">
+            </div>
+        </div>
+
+        <!-- Sisi Kanan: Judul & Teks Penjelasan -->
+        <div class="lg:col-span-6 space-y-6">
+            <h2 class="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+                Tentang<br>
+                Rekayasa<br>
+                Perangkat Lunak
+            </h2>
+
+            <p class="text-sm md:text-base text-gray-600 leading-relaxed text-justify">
+                Program studi ini membekali mahasiswa dengan penguasaan pengetahuan dan keterampilan rekayasa perangkat lunak, pemanfaatan data, serta pengembangan solusi digital cerdas yang mendukung perancangan, implementasi, pengujian, penerapan, dan pemeliharaan sistem perangkat lunak berbasis teknologi digital terkini, khususnya pada sektor strategis pertanian, kelautan, dan biosains tropika sebagai keunggulan IPB University.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+    <section id="mandat" class="bg-[#22006a] px-6 py-16 text-white md:px-16 md:py-20">
+        <div class="mx-auto max-w-7xl">
+            <div class="max-w-2xl">
+                <h2 class="mb-3 text-2xl font-bold md:text-3xl">Mandat</h2>
+                <p class="text-sm leading-relaxed text-white/80 md:text-base">
+                    Menyelenggarakan pendidikan dan penelitian terapan serta pengabdian masyarakat dalam bidang rekayasa perangkat lunak yang inovatif secara terpadu dengan melakukan kolaborasi bidang ilmu sehingga dapat dimanfaatkan oleh masyarakat.
+                </p>
+            </div>
+
+            <dl class="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 pt-8 sm:grid-cols-4 md:gap-x-10">
+                <div>
+                    <dt class="mb-2 text-lg font-semibold">Lama studi</dt>
+                    <dd class="text-sm text-white/80">8 semester (4 tahun)</dd>
+                </div>
+                <div>
+                    <dt class="mb-2 text-lg font-semibold">Gelar Kelulusan</dt>
+                    <dd class="text-sm text-white/80">Sarjana Terapan Komputer (S.Tr.Kom.)</dd>
+                </div>
+                <div>
+                    <dt class="mb-2 text-lg font-semibold">SNBP</dt>
+                    <dd class="space-y-1 text-sm text-white/80">
+                        <p>Jumlah pelamar: 627</p>
+                        <p>Diterima: 75</p>
+                        <p>Keketatan: 8,36</p>
+                    </dd>
+                </div>
+                <div>
+                    <dt class="mb-2 text-lg font-semibold">SNBT</dt>
+                    <dd class="space-y-1 text-sm text-white/80">
+                        <p>Jumlah pelamar: 1637</p>
+                        <p>Diterima: 42</p>
+                        <p>Keketatan: 38,98</p>
+                    </dd>
+                </div>
+            </dl>
+
+            <div class="mt-10 grid grid-cols-3 gap-4 pt-8 md:gap-8">
+                <div>
+                    <p data-counter="50" data-suffix="+" class="inline-block min-w-[3ch] tabular-nums text-3xl font-light md:text-4xl">50+</p>
+                    <p class="mt-1 text-[10px] text-white/70 md:text-xs">Total Active Students</p>
+                </div>
+                <div>
+                    <p data-counter="6" data-suffix="+" class="inline-block min-w-[3ch] tabular-nums text-3xl font-light md:text-4xl">6+</p>
+                    <p class="mt-1 text-[10px] text-white/70 md:text-xs">Total Lab</p>
+                </div>
+                <div>
+                    <p data-counter="10" data-suffix="+" class="inline-block min-w-[3ch] tabular-nums text-3xl font-light md:text-4xl">10+</p>
+                    <p class="mt-1 text-[10px] text-white/70 md:text-xs">Total Lecturer</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Dropdown / Accordion -->
+<section class="w-full py-20 bg-gray-50 px-6 md:px-16">
+    <div class="max-w-4xl mx-auto space-y-4">
+        
+        <!-- Dropdown 1 (Putih) -->
+        <div id="profil-umum" class="scroll-mt-4 bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 transition-all">
+            <button aria-controls="content-1" aria-expanded="false" onclick="toggleAccordion('content-1', 'icon-1')" class="w-full px-6 py-5 flex items-center justify-between text-left font-bold text-gray-900 focus:outline-none cursor-pointer">
+                <span class="text-base md:text-lg">Profil Umum D4 Teknologi Rekayasa Perangkat Lunak</span>
+                <svg id="icon-1" class="accordion-icon w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            <div id="content-1" inert class="accordion-content px-6 text-sm text-gray-600 leading-relaxed border-gray-100">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            </div>
+        </div>
+
+        <!-- Dropdown 2 (Ungu Tua) -->
+        <div id="visi-misi" class="scroll-mt-4 bg-[#120438] text-white rounded-xl shadow-md overflow-hidden transition-all">
+            <button aria-controls="content-2" aria-expanded="false" onclick="toggleAccordion('content-2', 'icon-2')" class="w-full px-6 py-5 flex items-center justify-between text-left font-bold focus:outline-none cursor-pointer">
+                <span class="text-base md:text-lg">Visi Misi</span>
+                <svg id="icon-2" class="accordion-icon w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            <div id="content-2" inert class="accordion-content px-6 text-sm text-gray-200 leading-relaxed border-white/10">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla.
+            </div>
+        </div>
+
+        <!-- Dropdown 3 (Putih) -->
+        <div id="profil-lulusan" class="scroll-mt-4 bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 transition-all">
+            <button aria-controls="content-3" aria-expanded="false" onclick="toggleAccordion('content-3', 'icon-3')" class="w-full px-6 py-5 flex items-center justify-between text-left font-bold text-gray-900 focus:outline-none cursor-pointer">
+                <span class="text-base md:text-lg">Profil Lulusan</span>
+                <svg id="icon-3" class="accordion-icon w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            <div id="content-3" inert class="accordion-content px-6 text-sm text-gray-600 leading-relaxed border-gray-100">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat nisl ut dapibus. Mauris iaculis porttitor posuere.
+            </div>
+        </div>
+
+        <!-- Dropdown 4 (Ungu Tua) -->
+        <div id="capaian-pembelajaran" class="scroll-mt-4 bg-[#120438] text-white rounded-xl shadow-md overflow-hidden transition-all">
+            <button aria-controls="content-4" aria-expanded="false" onclick="toggleAccordion('content-4', 'icon-4')" class="w-full px-6 py-5 flex items-center justify-between text-left font-bold focus:outline-none cursor-pointer">
+                <span class="text-base md:text-lg">Capaian Pembelajaran</span>
+                <svg id="icon-4" class="accordion-icon w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            <div id="content-4" inert class="accordion-content px-6 text-sm text-gray-200 leading-relaxed border-white/10">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor.
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Script JavaScript untuk Eksklusif Accordion -->
+<script>
+    function toggleMobileMenu() {
+        const button = document.getElementById('mobile-menu-button');
+        setMobileMenuOpen(button.getAttribute('aria-expanded') !== 'true');
+    }
+
+    function closeMobileMenu() {
+        setMobileMenuOpen(false);
+    }
+
+    function setMobileMenuOpen(isOpen) {
+        const menu = document.getElementById('mobile-menu');
+        const button = document.getElementById('mobile-menu-button');
+
+        menu.classList.toggle('is-open', isOpen);
+        menu.inert = !isOpen;
+        button.classList.toggle('is-open', isOpen);
+        button.setAttribute('aria-expanded', String(isOpen));
+        button.setAttribute('aria-label', isOpen ? 'Tutup menu' : 'Buka menu');
+    }
+
+    function toggleAccordion(contentId, iconId) {
+        const targetContent = document.getElementById(contentId);
+        const targetIcon = document.getElementById(iconId);
+        const isAlreadyOpen = targetContent.classList.contains('is-open');
+
+        // Tutup semua isi konten dan reset semua icon terlebih dahulu
+        const allContents = document.querySelectorAll('.accordion-content');
+        const allIcons = document.querySelectorAll('.accordion-icon');
+
+        allContents.forEach(content => {
+            content.classList.remove('is-open');
+            content.inert = true;
+            content.previousElementSibling.setAttribute('aria-expanded', 'false');
+        });
+        allIcons.forEach(icon => icon.classList.remove('rotate-180'));
+
+        // Jika sebelumnya tertutup, maka buka yang diklik
+        if (!isAlreadyOpen) {
+            targetContent.classList.add('is-open');
+            targetContent.inert = false;
+            targetContent.previousElementSibling.setAttribute('aria-expanded', 'true');
+            targetIcon.classList.add('rotate-180');
+        }
+    }
+
+    function animateCounter(counter) {
+        const target = Number(counter.dataset.counter);
+        const suffix = counter.dataset.suffix || '';
+        const duration = 1200;
+        const startTime = performance.now();
+
+        function updateCounter(currentTime) {
+            const progress = Math.min((currentTime - startTime) / duration, 1);
+            const easedProgress = 1 - Math.pow(1 - progress, 3);
+
+            counter.textContent = `${Math.floor(easedProgress * target)}${suffix}`;
+
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            }
+        }
+
+        requestAnimationFrame(updateCounter);
+    }
+
+    function initializeCounters() {
+        const counters = document.querySelectorAll('[data-counter]');
+
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return;
+        }
+
+        if (!('IntersectionObserver' in window)) {
+            counters.forEach(animateCounter);
+            return;
+        }
+
+        const counterObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter(entry.target);
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counters.forEach(counter => counterObserver.observe(counter));
+    }
+
+    initializeCounters();
+</script>
+
+<!-- Section Profil Dosen -->
+<section class="w-full py-20 bg-white text-gray-900 px-6 md:px-16">
+    <div class="max-w-7xl mx-auto space-y-12">
+        
+        <!-- Judul Section -->
+        <h2 class="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+            Profil Dosen
+        </h2>
+
+        <!-- Grid Container untuk Card Dosen -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- Card 1 -->
+            <div class="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center">
+                <!-- Foto Dosen (Ukuran Persis: 187.66px x 250.21px) -->
+                <div class="w-full flex justify-center mb-6">
+                    <div class="rounded-2xl overflow-hidden bg-gray-100 shadow-sm" style="width: 187.66px; height: 250.21px;">
+                        <img src="assets/Aep Setiawan, S.Si., M.Si._TEK.jpg" 
+                             alt="Aep Setiawan, S.Si, M.Si, TEK" 
+                             class="w-full h-full object-cover object-center">
+                    </div>
+                </div>
+                <!-- Nama & Gelar -->
+                <h3 class="font-bold text-gray-900 text-base md:text-lg mb-1 leading-snug">
+                    Aep Setiawan, S.Si, M.Si, TEK
+                </h3>
+                <!-- Jabatan / Bidang -->
+                <p class="text-xs md:text-sm text-gray-500 font-medium">
+                    Data scientist
+                </p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center">
+                <!-- Foto Dosen (Ukuran Persis: 187.66px x 250.21px) -->
+                <div class="w-full flex justify-center mb-6">
+                    <div class="rounded-2xl overflow-hidden bg-gray-100 shadow-sm" style="width: 187.66px; height: 250.21px;">
+                        <img src="assets/Aep Setiawan, S.Si., M.Si._TEK.jpg" 
+                             alt="Aep Setiawan, S.Si, M.Si, TEK" 
+                             class="w-full h-full object-cover object-center">
+                    </div>
+                </div>
+                <!-- Nama & Gelar -->
+                <h3 class="font-bold text-gray-900 text-base md:text-lg mb-1 leading-snug">
+                    Aep Setiawan, S.Si, M.Si, TEK
+                </h3>
+                <!-- Jabatan / Bidang -->
+                <p class="text-xs md:text-sm text-gray-500 font-medium">
+                    Data scientist
+                </p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center">
+                <!-- Foto Dosen (Ukuran Persis: 187.66px x 250.21px) -->
+                <div class="w-full flex justify-center mb-6">
+                    <div class="rounded-2xl overflow-hidden bg-gray-100 shadow-sm" style="width: 187.66px; height: 250.21px;">
+                        <img src="assets/Aep Setiawan, S.Si., M.Si._TEK.jpg" 
+                             alt="Aep Setiawan, S.Si, M.Si, TEK" 
+                             class="w-full h-full object-cover object-center">
+                    </div>
+                </div>
+                <!-- Nama & Gelar -->
+                <h3 class="font-bold text-gray-900 text-base md:text-lg mb-1 leading-snug">
+                    Aep Setiawan, S.Si, M.Si, TEK
+                </h3>
+                <!-- Jabatan / Bidang -->
+                <p class="text-xs md:text-sm text-gray-500 font-medium">
+                    Data scientist
+                </p>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center">
+                <!-- Foto Dosen (Ukuran Persis: 187.66px x 250.21px) -->
+                <div class="w-full flex justify-center mb-6">
+                    <div class="rounded-2xl overflow-hidden bg-gray-100 shadow-sm" style="width: 187.66px; height: 250.21px;">
+                        <img src="assets/Aep Setiawan, S.Si., M.Si._TEK.jpg" 
+                             alt="Aep Setiawan, S.Si, M.Si, TEK" 
+                             class="w-full h-full object-cover object-center">
+                    </div>
+                </div>
+                <!-- Nama & Gelar -->
+                <h3 class="font-bold text-gray-900 text-base md:text-lg mb-1 leading-snug">
+                    Aep Setiawan, S.Si, M.Si, TEK
+                </h3>
+                <!-- Jabatan / Bidang -->
+                <p class="text-xs md:text-sm text-gray-500 font-medium">
+                    Data scientist
+                </p>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center">
+                <!-- Foto Dosen (Ukuran Persis: 187.66px x 250.21px) -->
+                <div class="w-full flex justify-center mb-6">
+                    <div class="rounded-2xl overflow-hidden bg-gray-100 shadow-sm" style="width: 187.66px; height: 250.21px;">
+                        <img src="assets/Aep Setiawan, S.Si., M.Si._TEK.jpg" 
+                             alt="Aep Setiawan, S.Si, M.Si, TEK" 
+                             class="w-full h-full object-cover object-center">
+                    </div>
+                </div>
+                <!-- Nama & Gelar -->
+                <h3 class="font-bold text-gray-900 text-base md:text-lg mb-1 leading-snug">
+                    Aep Setiawan, S.Si, M.Si, TEK
+                </h3>
+                <!-- Jabatan / Bidang -->
+                <p class="text-xs md:text-sm text-gray-500 font-medium">
+                    Data scientist
+                </p>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center">
+                <!-- Foto Dosen (Ukuran Persis: 187.66px x 250.21px) -->
+                <div class="w-full flex justify-center mb-6">
+                    <div class="rounded-2xl overflow-hidden bg-gray-100 shadow-sm" style="width: 187.66px; height: 250.21px;">
+                        <img src="assets/Aep Setiawan, S.Si., M.Si._TEK.jpg" 
+                             alt="Aep Setiawan, S.Si, M.Si, TEK" 
+                             class="w-full h-full object-cover object-center">
+                    </div>
+                </div>
+                <!-- Nama & Gelar -->
+                <h3 class="font-bold text-gray-900 text-base md:text-lg mb-1 leading-snug">
+                    Aep Setiawan, S.Si, M.Si, TEK
+                </h3>
+                <!-- Jabatan / Bidang -->
+                <p class="text-xs md:text-sm text-gray-500 font-medium">
+                    Data scientist
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Section TRPL News -->
+<section id="berita" class="w-full py-20 bg-white text-gray-900 px-6 md:px-16">
+    <div class="max-w-7xl mx-auto space-y-12">
+        
+        <!-- Header Judul News -->
+        <div class="text-center space-y-2">
+            <span class="text-xs md:text-sm font-bold tracking-widest text-cyan-600 uppercase">
+                Our Latest <span class="text-indigo-600">News</span>
+            </span>
+            <h2 class="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+                TRPL News
+            </h2>
+        </div>
+
+        <!-- Grid Container untuk Card Berita -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            
+            <!-- Card Berita 1 -->
+            <div class="relative rounded-3xl overflow-hidden shadow-xl aspect-[16/10] bg-gray-900 group">
+                <!-- Background Image -->
+                <img src="https://sv.ipb.ac.id/wp-content/uploads/2021/12/header-inf.png" 
+                     alt="TRPL News 1" 
+                     class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+                
+                <!-- Gradasi Tipis di Bawah agar Teks Terbaca -->
+                <div class="absolute inset-0 bg-gradient-to-t from-[#120438]/80 via-[#120438]/30 to-transparent pointer-events-none"></div>
+
+                <!-- Badge Hot News -->
+                <div class="absolute top-4 right-4 z-10">
+                    <span class="bg-[#4f39f6]/90 backdrop-blur-md text-white text-[10px] md:text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+                        Hot News
+                    </span>
+                </div>
+
+                <!-- Teks Berita di Bawah -->
+                <div class="absolute bottom-0 left-0 w-full p-6 z-10">
+                    <p class="text-xs md:text-sm text-gray-100 font-medium leading-relaxed drop-shadow-md line-clamp-2">
+                        Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been the industry's standard dummy text ever since 1966,
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card Berita 2 -->
+            <div class="relative rounded-3xl overflow-hidden shadow-xl aspect-[16/10] bg-gray-900 group">
+                <!-- Background Image -->
+                <img src="https://www.ipb.ac.id/wp-content/uploads/2024/03/Hobi-Ngoding-dan-Mau-Jadi-Software-Engineer-Yuk-Wujudkan-Mimpimu-di-Prodi-Sekolah-Vokasi-IPB-University-Ini-scaled-770x400.jpg" 
+                     alt="TRPL News 2" 
+                     class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+                
+                <!-- Gradasi Tipis di Bawah agar Teks Terbaca -->
+                <div class="absolute inset-0 bg-gradient-to-t from-[#120438]/80 via-[#120438]/30 to-transparent pointer-events-none"></div>
+
+                <!-- Badge Hot News -->
+                <div class="absolute top-4 right-4 z-10">
+                    <span class="bg-[#4f39f6]/90 backdrop-blur-md text-white text-[10px] md:text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+                        Hot News
+                    </span>
+                </div>
+
+                <!-- Teks Berita di Bawah -->
+                <div class="absolute bottom-0 left-0 w-full p-6 z-10">
+                    <p class="text-xs md:text-sm text-gray-100 font-medium leading-relaxed drop-shadow-md line-clamp-2">
+                        Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been the industry's standard dummy text ever since 1966,
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Tombol See All di Bawah -->
+        <div class="flex justify-center pt-4">
+            <a href="#" class="bg-[#4f39f6] hover:bg-[#4330d6] text-white text-sm font-semibold px-8 py-3 rounded-full shadow-lg transition-all duration-200 transform hover:scale-105">
+                See All
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<!-- Section Footer -->
+<footer class="w-full bg-[#120438] text-white pt-16 pb-8 px-6 md:px-16 border-t border-white/10">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+        
+        <!-- Kolom 1: Logo & Nama Prodi -->
+        <div class="lg:col-span-2 space-y-4">
+            <div class="flex items-center space-x-3">
+                 <img src="assets/logofix.png" 
+                     alt="Logo TRPL IPB" 
+                     class="h-10 w-auto max-w-[210px] object-contain">
+            </div>
+            <p class="text-xs text-gray-300 max-w-sm leading-relaxed">
+                Program Studi Sarjana Terapan Teknologi Rekayasa Perangkat Lunak, Sekolah Vokasi IPB University. Menghasilkan lulusan profesional di bidang pengembangan perangkat lunak dan teknologi digital.
+            </p>
+        </div>
+
+        <!-- Kolom 2: Learn More -->
+        <div class="space-y-4">
+            <h4 class="font-bold text-sm tracking-wide uppercase text-white">Learn More</h4>
+            <ul class="space-y-2.5 text-xs text-gray-300">
+                <li><a href="#" class="hover:text-cyan-300 transition-colors">About Program</a></li>
+                <li><a href="#" class="hover:text-cyan-300 transition-colors">Press Release</a></li>
+                <li><a href="#" class="hover:text-cyan-300 transition-colors">Environment</a></li>
+                <li><a href="#" class="hover:text-cyan-300 transition-colors">Jobs</a></li>
+                <li><a href="#" class="hover:text-cyan-300 transition-colors">Privacy Policy</a></li>
+                <li><a href="#" class="hover:text-cyan-300 transition-colors">Contact Us</a></li>
+            </ul>
+        </div>
+
+        <!-- Kolom 3: Tickets & Bookings / Quick Links -->
+        <div class="space-y-4">
+            <h4 class="font-bold text-sm tracking-wide uppercase text-white">Quick Links</h4>
+            <ul class="space-y-2.5 text-xs text-gray-300">
+                <li><a href="#" class="hover:text-cyan-300 transition-colors">Academic Info</a></li>
+                <li><a href="#" class="hover:text-cyan-300 transition-colors">Season Passes</a></li>
+                <li><a href="#" class="hover:text-cyan-300 transition-colors">Curriculum & Packages</a></li>
+            </ul>
+        </div>
+
+        <!-- Kolom 4: Contact Us & Social Media -->
+        <div class="space-y-4">
+            <h4 class="font-bold text-sm tracking-wide uppercase text-white">Contact Us</h4>
+            <div class="space-y-2 text-xs text-gray-300">
+                <p>Support Desk: <span class="text-white font-semibold">123-456-789</span></p>
+                <p>Office: <span class="text-white font-semibold">123-456-789</span></p>
+            </div>
+
+            <div class="pt-2">
+                <h5 class="font-bold text-xs tracking-wide uppercase text-white mb-3">Social</h5>
+                <div class="flex items-center space-x-3">
+                    <!-- Facebook -->
+                    <a href="#" class="w-8 h-8 rounded-full bg-white/10 hover:bg-cyan-400 hover:text-gray-900 flex items-center justify-center transition-colors text-xs">
+                        f
+                    </a>
+                    <!-- Instagram -->
+                    <a href="#" class="w-8 h-8 rounded-full bg-white/10 hover:bg-cyan-400 hover:text-gray-900 flex items-center justify-center transition-colors text-xs">
+                        ig
+                    </a>
+                    <!-- Twitter / X -->
+                    <a href="#" class="w-8 h-8 rounded-full bg-white/10 hover:bg-cyan-400 hover:text-gray-900 flex items-center justify-center transition-colors text-xs">
+                        t
+                    </a>
+                    <!-- YouTube -->
+                    <a href="#" class="w-8 h-8 rounded-full bg-white/10 hover:bg-cyan-400 hover:text-gray-900 flex items-center justify-center transition-colors text-xs">
+                        yt
+                    </a>
+                    <!-- Web / WordPress -->
+                    <a href="#" class="w-8 h-8 rounded-full bg-white/10 hover:bg-cyan-400 hover:text-gray-900 flex items-center justify-center transition-colors text-xs">
+                        w
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Garis Pemisah & Copyright -->
+    <div class="max-w-7xl mx-auto pt-6 border-t border-white/10 text-center text-xs text-gray-400">
+        <p>© 2026 Teknologi Rekayasa Perangkat Lunak - Sekolah Vokasi IPB University | All Rights Reserved</p>
+    </div>
+</footer>
+
+    
+
+    <script>
+        function playVideo() {
+            const iframe = document.getElementById('yt-player');
+            const overlay = document.getElementById('video-overlay');
+            const text = document.getElementById('video-text');
+            const playBtn = document.getElementById('play-btn');
+
+            iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none';
+            text.style.opacity = '0';
+            playBtn.style.opacity = '0';
+            playBtn.style.pointerEvents = 'none';
+        }
+    </script>
+
+</body>
+</html>
